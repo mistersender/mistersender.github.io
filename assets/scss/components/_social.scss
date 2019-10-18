@@ -1,0 +1,76 @@
+.c-social{
+ display: flex;
+ align-items: flex-start;
+ justify-content: space-between;
+
+
+ @include media(">md"){
+  flex-direction: column;
+ }
+
+ &__item{
+  // display: inline-block;
+  transition: transform .2s ease;
+  &:hover{
+   transform: translateY(-.2em);
+  }
+  @include media("<=md"){ // only put this in a media query targeting small screens because it's a PITA to un-override the owl as we scale up
+   margin: 0;
+  }
+  align-items: center;
+
+  @include media(">md"){
+   float: left;
+   display: flex;
+  }
+
+  &:before{
+   content: "";
+   display: inline-block;
+   position: relative;
+   width: 1em;
+   height: 1em;
+   margin: .2em;
+   font-size: 2.6em;
+   box-shadow: 0 0 0 .2em currentColor, 0 0.25em 0.2em 0 color(a, -3);
+   background: no-repeat 0 50%/cover currentColor;
+   border-radius: 1px;
+   @include media(">sm"){
+    font-size: 3.6em;
+   }
+   @include media(">md"){
+    float: left;
+    margin-right: .5em;
+   }
+  }
+
+  &--twitter:before{
+   background-image: url(../images/icons/twitter.svg);
+   color: #4da7de;
+  }
+  &--github:before{
+   background-image: url(../images/icons/github.svg);
+   color: #221e1b;
+  }
+  &--linkedin:before{
+   background-image: url(../images/icons/linkedin.svg);
+   color: #3371b7;
+  }
+  &--stackoverflow:before{
+   background-image: url(../images/icons/stackoverflow.svg);
+   color: color(a, -5.5);
+  }
+  &--icon-only{
+   text-indent: -9999em;
+  }
+ }
+
+ &__caption{
+  display: none;
+  @include media(">md"){
+   display: inline-block;
+  }
+ }
+
+
+}

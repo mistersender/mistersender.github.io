@@ -1,0 +1,8 @@
+@mixin add_keyframes($name: "burbiddybloop"){
+ @-webkit-keyframes #{$name} {
+  @content;
+ }
+ @keyframes #{$name} {
+  @content;
+ }
+}

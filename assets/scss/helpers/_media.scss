@@ -1,0 +1,324 @@
+@if not variable-exists(media){ // just ensures $media is defined
+ $media: "" !global;
+}
+
+// Creates a list of global breakpoints
+$breakpoints: ("phone": 320px, "tablet": 768px, "desktop": 1024px) !default;
+
+// Creates a list of static expressions or media types
+$media-expressions: ("screen": "screen", "print": "print", "handheld": "handheld", "retina2x": ("(-webkit-min-device-pixel-ratio: 2)", "(min-resolution: 192dpi)"), "retina3x": ("(-webkit-min-device-pixel-ratio: 3)", "(min-resolution: 350dpi)")) !default;
+
+// Defines a number to be added or subtracted from each unit when declaring breakpoints with exclusive intervals
+$unit-intervals: ("px": 1, "em": 0.01, "rem": 0.1) !default;
+
+
+// @author Tyler Benton
+// @page helpers/mixins
+// @description
+// Generates a media query based on a list of conditions
+// You can use `>`, `>=`, `<`, `<=` to help you express what you want your media query to do
+//  - If you wanted the media query to be greater than or equal to the `sm` media query size your argument would be `">=sm"`
+//  - If you wanted the media query to be between two sizes you can just pass 2 arguments
+//  - You can also specific size other than the defined ones in `$breakpoint`
+//
+// @arg {list} $conditions...  - Media query conditions
+// @arg {"each"} nth($conditions, 1) - Pass `"each"` as the first argument to do something for each media query in the list
+// @arg {"breakpoint"} nth($conditions, 2) - Pass `"breakpoint"` as the second argument do so something for each defined breakpoint.
+//
+// @markup {scss} (example="false") **Example:** With a single set breakpoint
+//  /\/ pretend the `sm` size is 568px
+//  \@include media(">sm"){ } /\/ -> \@media (min-width: 569px){ }
+//
+// @markup {scss} (example="false") **Example:** With two set breakpoints
+//  /\/ pretend the `sm` size is 568px and the `md` size is 768px
+//  \@include media(">sm", "<=md"){ } /\/ -> \@media (min-width: 569px) and (max-width: 768px){ }
+//
+// @markup {scss} (example="false") **Example:** With custom values
+//  \@include media(">=358px", "<850px"){ } /\/ -> \@media (min-width: 358px) and (max-width: 849px){ }
+//
+// @markup {scss} (example="false") **Example:** With set breakpoints with custom values
+//  /\/ pretend the `lg` size is 1024px
+//  \@include media(">lg", "<=1350px"){ } /\/ -> \@media (min-width: 1025px) and (max-width: 1350px){ }
+//
+// @markup {scss} (example="false") **Example:** With a static expression
+//  \@include media("retina2x"){ } /\/ \@media /* what ever the current media query is for retina 2x */ {}
+//
+// @markup {scss} (example="false") **Example:** Each media query in list
+//  /\/ pretend the `sm` size is 568px and the `md` size is 768px
+//  \@include media("each", "", ">=sm", ">=md"){
+//   .foo#{$media}{ /\/ use `$media` to get the namespace of the breakpoint
+//    background: black;
+//   }
+//  }
+//
+// @markup {css} (example="false") **Output:** Each media query in list
+//  .foo{
+//   background: black;
+//  }
+//  \@media (min-width: 568px){
+//   .foo\@sm{
+//    background: black;
+//   }
+//  }
+//  \@media (min-width: 768px){
+//   .foo\@md{
+//    background: black;
+//   }
+//  }
+//
+//
+// @markup {scss} (example="false") **Example:** Do something for each breakpoint in `$breakpoints`
+//  \@include media("each", "breakpoint"){
+//   .foo#{$media}{
+//    background: black;
+//   }
+//  }
+//
+// @markup {css} (example="false") **Output:** Do something for each breakpoint in `$breakpoints`
+//  .foo{
+//   background: black;
+//  }
+//  \@media (min-width: 568px){
+//   .foo\@sm{
+//    background: black;
+//   }
+//  }
+//  \@media (min-width: 768px){
+//   .foo\@md{
+//    background: black;
+//   }
+//  }
+//  \@media (min-width: 1024px){
+//   .foo\@lg{
+//    background: black;
+//   }
+//  }
+//  \@media (min-width: 1400px){
+//   .foo\@xl{
+//    background: black;
+//   }
+//  }
+@mixin media($conditions...){
+ $media: "" !global; // resets $media to be "" each time it's called so it doesn't interfere with other media calls
+
+ @if nth($conditions, 1) == "each"{
+  $_breakpoint: nth($conditions, 2);
+  $_breakpoint-index: str-index($_breakpoint, "breakpoint");
+  @if $_breakpoint-index != null{
+   @if $_breakpoint-index == 1{ // if the dimention and operator aren't set
+    $_breakpoint: "width>=breakpoint";
+   }
+   $_breakpoint-parsed: parse-expression($_breakpoint);
+   $conditions: set-nth($conditions, 2, "");
+   @each $key, $value in $breakpoints{ // loops through each breakpoint name and prepends "<=" to it.
+    $conditions: append($conditions, "" + map-get($_breakpoint-parsed, dimension) + map-get($_breakpoint-parsed, operator) + $key, "comma");
+   }
+  }
+
+  @for $i from 2 through length($conditions){
+   $condition: nth($conditions, $i);
+   $name: map-get(parse-expression($condition), value);
+   @include media(nth($conditions, $i)){
+    $media: if($name == "", "", "\\@#{$name}") !global;
+    @content;
+   }
+  }
+
+ }@else{
+  @for $i from 1 through length($conditions){
+   $conditions: set-nth($conditions, $i, map-get(parse-expression(nth($conditions, $i)), expression));
+  }
+  $branches: get-query-branches($conditions);
+  $query: "";
+  @each $branch in $branches{
+   @if (str-length($query) != 0){
+    $query: $query + ", ";
+   }
+   $query: $query + $branch;
+  }
+  @if $query == ""{
+   @content;
+  }@else{
+   @media #{$query}{
+    @content;
+   }
+  }
+ }
+
+ $media: "" !global; // resets $media to be "" each time it's called so it doesn't interfere with other media calls
+}
+
+// @author Tyler Benton
+// @page helpers/functions
+// @access private
+//
+// @description - Reads a list of media query expressions and separates logical disjunctions into different branches
+//
+// @arg {List} $expressions - list of expressions
+//
+// @return {List | Null}
+@function get-query-branches($expressions){
+ $result: "";
+ $has-groups: false;
+ // Getting initial snapshot and looking for groups
+ @each $expression in $expressions{
+  @if (str-length($result) != 0){
+   $result: $result + " and ";
+  }
+  @if (type-of($expression) == "string"){
+   $result: $result + $expression;
+  }
+  @else if (type-of($expression) == "list"){
+   $result: $result + nth($expression, 1);
+   $has-groups: true;
+  }
+  @else{
+   @warn "#{$expression} is not a valid expression.";
+  }
+ }
+ // If we have groups, we have to create all possible combinations
+ @if $has-groups{
+  @each $expression in $expressions{
+   @if (type-of($expression) == "list"){
+    $first: nth($expression, 1);
+    @each $member in $expression{
+     @if ($member != $first){
+      @each $partial in $result{
+       $result: join($result, str-replace-first($first, $member, $partial));
+      }
+     }
+    }
+   }
+  }
+ }
+ @return $result;
+}
+
+
+// @author Tyler Benton
+// @page helpers/functions
+// @access private
+//
+// @description Parses a string to form a media query expression
+//
+// @arg {String} $expression  - expression (in string)
+//
+// @return {String | Null}
+@function parse-expression($expression){
+  $operator: "";
+  $value: "";
+  $element: "";
+  $result: "";
+  $is-value: true;
+  $dimension: "width";
+
+  @if (type-of($expression) != "string"){
+    @warn "Expression with type `#{type-of($expression)}` detected, string expected.";
+  }
+
+  @if $expression != ""{
+
+   // Detecting the "height" prefix
+   @if (str-slice($expression, 1, 6) == "height"){
+    $dimension: "height";
+    $expression: str-slice($expression, 7);
+   }
+
+   // Detecting (and ignoring) the "width" prefix for consistency
+   @if (str-slice($expression, 1, 5) == "width"){
+    $expression: str-slice($expression, 6);
+   }
+
+   // Separating the operator from the rest of the expression
+   @if (str-slice($expression, 2, 2) == "="){
+    $operator: str-slice($expression, 1, 2);
+    $value: str-slice($expression, 3);
+   }@else{
+    $operator: str-slice($expression, 1, 1);
+    $value: str-slice($expression, 2);
+   }
+
+   // Checking what type of expression we're dealing with
+   @if map-has-key($breakpoints, $value){
+    $result: map-get($breakpoints, $value);
+   }@else if map-has-key($media-expressions, $expression){
+    $result: map-get($media-expressions, $expression);
+    $value: $expression;
+    $is-value: false;
+   }@else if str-index($expression, "breakpoint") != null{
+    $result: "multiple breakpoints";
+    $is-value: false;
+   }@else{
+    $result: to-number($value);
+   }
+
+   @if ($is-value){
+    $unit: unit($result);
+    $interval: 0;
+
+    @if (map-has-key($unit-intervals, $unit)){
+     $interval: map-get($unit-intervals, $unit);
+    }@else{
+     @warn "Unknown unit: #{$unit}";
+    }
+
+    @if ($operator == ">"){
+     $element: "(min-#{$dimension}: #{$result + $interval})";
+    }@else if ($operator == "<"){
+     $element: "(max-#{$dimension}: #{$result - $interval})";
+    }@else if ($operator == ">="){
+     $element: "(min-#{$dimension}: #{$result})";
+    }@else if ($operator == "<="){
+     $element: "(max-#{$dimension}: #{$result})";
+    }@else{
+     @warn "#{$expression} is missing an operator.";
+    }
+   }@else{
+    $element: $result;
+   }
+  }
+
+  @return (
+   expression: $element,
+   operator: $operator,
+   dimension: $dimension,
+   value: $value
+  );
+}
+
+// @author Tyler Benton
+// @access private
+// @description - Replaces the first occurence of the string with the replacement string
+//
+// @arg {String} $search - The value being searched for
+// @arg {String} $replace - The replacement string
+// @arg {String} $subject - The string being replaced on
+//
+// @return {String | Null}
+@function str-replace-first($search, $replace, $subject){
+ $search-start: str-index($subject, $search);
+ @if $search-start == null{
+  @return $subject;
+ }
+ $result: str-slice($subject, 0, $search-start - 1);
+ $result: $result + $replace;
+ $result: $result + str-slice($subject, $search-start + str-length($search));
+ @return $result;
+}
+
+// @author Tyler Benton
+// @page helpers/mixins
+// @description Used to easily list the breakpoints available in the console.
+//
+// @arg {string} $breakpoint - specify which breakpoint you want or it will log all the breakpoints
+@mixin console-media($breakpoint: "all"){
+ @debug "Breakpoints -------------------------------------------------------";
+ @if $breakpoint == "all"{
+  @each $key, $value in $breakpoints{
+   @debug "@#{$key}: #{$value}";
+  }
+ }@else{
+  @debug "@#{$breakpoint}: #{map-get($breakpoints, $breakpoint)}";
+ }
+ @debug "---------------------------------------------------------------------";
+}

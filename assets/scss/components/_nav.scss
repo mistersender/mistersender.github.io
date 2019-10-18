@@ -1,0 +1,103 @@
+
+// <nav class="c-nav o-wrapper">
+//  <a href="#" class="c-nav__link c-nav__link--resume">Resume</a>
+//  <a href="#" class="c-nav__link c-nav__link--portfolio">Portfolio</a>
+//  <a href="#" class="c-nav__link c-nav__link--contact">Contact</a>
+// </nav>
+$nav-items: ("contact", "portfolio", "resume");
+.c-nav{
+ position: absolute;
+ top: 0;
+ right: 0;
+
+ &:before{
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-radius: 50%;
+  border: 1px solid color(a);
+  width: 1em;
+  height: 1em;
+  font-size: 44px;
+  margin: .1em 0 .1em 0;
+  z-index: 3;
+  background: color(white);
+  opacity: 1;
+  transition: opacity .4s ease;
+
+ }
+
+ &.is-open:before{
+  opacity: 0;
+ }
+
+ &:after{
+  content: "";
+  display: block;
+  background: color(a, 3);
+  width: 24px;
+  height: 20px;
+  position: absolute;
+  top: 16px;
+  left: -34px;
+  z-index: 3;
+  box-shadow: 0px 8px 0px -5px color(a, 3) inset,
+              1px 14px 0px -5px color(white) inset,
+              1px -8px 0px -5px color(a, 3) inset,
+              1px -13px 0px -5px color(white) inset;
+ }
+
+ @include media("<md"){
+  //some stuff
+ }
+
+ &__link{
+  padding: .6em 3.5em 0.6em 1em;
+  border-radius: 6px 22px 22px 6px;
+  border: 1px solid color(a);
+  color: color(a, 4);
+  font-size: 1.4em;
+  margin: .2em 0;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: color(white);
+  box-shadow: -2px 2px 4px 0px rgba(0,0,0,0.2);
+  width: 200px;
+  z-index: 2;
+  overflow: hidden;
+  transform-origin: 178px 50%;
+  transform: scaleX(0);
+  transition: transform .2s cubic-bezier(0.35,-0.12, 0.04, 1);
+
+  .is-open &{
+   transform: scaleX(1);
+  }
+ }
+
+
+ @for $i from 1 through length($nav-items){
+  $nav-item: nth($nav-items, $i);
+  $x: length($nav-items) - $i;
+  &__link--#{$nav-item}{
+   .is-open &{
+    animation: nav_menu_#{$nav-item} 1s .2s cubic-bezier(0.99,-0.24, 0, 1.08) forwards;//cubic-bezier(1,-0.1, 0, 1.12) forwards;
+    box-shadow: (-6px + ($x * 3)) (6px + ($x * 1)) (4px + $x) -5px rgba(color(a, 3), .3);
+   }
+  }
+
+  @include add_keyframes("nav_menu_" + $nav-item){
+   0% {
+    transform: scaleX(1) rotateZ(0);
+   }
+   30% {
+    transform: scaleX(1) rotateZ(3deg);
+   }
+   100% {
+    transform: scaleX(1) rotateZ(-25deg * ($i - 1));
+   }
+  }
+ }
+}

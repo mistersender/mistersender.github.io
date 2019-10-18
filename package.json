@@ -1,0 +1,37 @@
+{
+  "name": "mistersender.github.io",
+  "version": "1.0.0",
+  "description": "Portfolio website for myself",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "live-server --host=localhost --port=3000 --watch=./assets/css/site.css,./index.html",
+    "start": "concurrently \"gulp watch\" \"npm run serve\"",
+    "build": "gulp css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mistersender/mistersender.github.io.git"
+  },
+  "author": "Jessica Kennedy",
+  "license": "ISC",
+  "browserslist": [
+    "last 2 versions",
+    "> 1%",
+    "not dead"
+  ],
+  "bugs": {
+    "url": "https://github.com/mistersender/mistersender.github.io/issues"
+  },
+  "homepage": "https://github.com/mistersender/mistersender.github.io#readme",
+  "dependencies": {
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^7.0.1",
+    "gulp-sass": "^4.0.2"
+  },
+  "devDependencies": {
+    "concurrently": "^5.0.0",
+    "gulp-clean-css": "^4.2.0",
+    "live-server": "^1.2.1"
+  }
+}

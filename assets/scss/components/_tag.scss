@@ -1,0 +1,47 @@
+.c-tag{
+ background: color(a, -4);
+ color: color(white);
+ display: inline-block;
+ border-radius: 6px;
+ position: relative;
+ padding: .2em .5em;
+ margin: .3em;
+ white-space: nowrap;
+ z-index: 3;
+ cursor: pointer;
+ transition: transform .2s ease;
+ &:hover{
+  transform: scale(1.1);
+ }
+
+ &--title{
+  background: rgba(color(white), .125);
+  color: color(white);
+  display: inline;
+  margin: 0 .5em;
+ }
+ &--category{
+  background: color(d, -3);
+ }
+ &--primary{
+  background: color(b, -3);
+ }
+ &--rudimentary{
+  background: color(c, -3);
+ }
+ &--exploring{
+  background: color(d, -3);
+ }
+ &.is-disabled{
+  background: color(a, -5);
+  color: color(a, -3);
+ }
+}
+
+.c-tags{
+ display: flex;
+ flex-wrap: wrap;
+ align-content: space-between;
+ margin-left: -.3em;
+ margin-right: -.3em;
+}

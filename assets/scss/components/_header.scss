@@ -1,0 +1,36 @@
+
+.s-header{
+ background: rgba(color(white), .8);
+ border-bottom: 1px solid rgba(color(a, -2), .8);
+ position: fixed;
+ width: 100%;
+ top: 0;
+ left: 0;
+ z-index: 99;
+
+ @include media(">md"){
+  text-align: center;
+  position: relative;
+  padding: 1em 0;
+ }
+
+ * + * {
+  margin-top: 0; // turn off owl
+ }
+
+ &__logo{
+  width: 1em;
+  height: 1em;
+  font-size: 44px;
+  border-radius: 50%;
+  float: left;
+  margin: .1em .2em .1em 0;
+
+  @include media(">md"){
+   float: none;
+   width: 3em;
+   height: 3em;
+   margin: 0;
+  }
+ }
+}

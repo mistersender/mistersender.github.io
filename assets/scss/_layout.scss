@@ -1,0 +1,77 @@
+// @name Wrapper
+// @author Tyler Benton
+// @page layout/wrapper
+//
+// @markup
+// <!-- Don't write inline styles like this it's for example purposes only -->
+// <div style="background: black; min-height: 20px;"> <!-- prentend it's the body -->
+//  <div class="l-wrapper" style="background: gray; min-height: 20px;">
+//   <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae, saepe, cupiditate, culpa, error magnam nihil totam quo amet molestias fuga expedita quibusdam aut aperiam pariatur dignissimos. Facilis laborum ullam eaque.</p>
+//   <p class="l-wrapper-inverted" style="background: red;">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae, saepe, cupiditate, culpa, error magnam nihil totam quo amet molestias fuga expedita quibusdam aut aperiam pariatur dignissimos. Facilis laborum ullam eaque.</p>
+//  </div>
+// </div>
+$o-wrapper: (
+ base: 10px,
+ md: 30px,
+ lg: 40px
+);
+.o-wrapper{
+ margin: 0 get($o-wrapper, base);
+ @include media(">=md"){
+  margin: 0 get($o-wrapper, md);
+ }
+ @include media(">=lg"){
+  margin: 0 get($o-wrapper, lg);
+ }
+ &-inverted{
+  padding: 0 get($o-wrapper, base);
+  margin: {
+   left: neg(get($o-wrapper, base));
+   right: neg(get($o-wrapper, base));
+  };
+  @include media(">=md"){
+   padding: 0 get($o-wrapper, md);
+   margin: {
+    left: neg(get($o-wrapper, md));
+    right: neg(get($o-wrapper, md));
+   };
+  }
+  @include media(">=lg"){
+   padding: 0 get($o-wrapper, lg);
+   margin: {
+    left: neg(get($o-wrapper, lg));
+    right: neg(get($o-wrapper, lg));
+   };
+  }
+ }
+}
+
+// @name Overlay
+// @author Jessica Kennedy
+// @page layout/overlay
+// @description
+// adds an overlay for bringing the user's focus to something over the rest of the page
+.c-overlay{
+ background-color: rgba(color(a, 6), .5);
+ bottom: 0;
+ left: 0;
+ padding: 44px 0;
+ position: fixed; // prevents the page from scrolling
+ right: 0;
+ top: 0;
+ z-index: 999;
+}
+
+.is-loading, .is-loading a{
+ cursor: progress;
+}
+
+body{
+ background: color(c, -14);
+ opacity: 0;
+ transition: opacity 1s;
+
+ &.is-loaded {
+   opacity: 1;
+ }
+}

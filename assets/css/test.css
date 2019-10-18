@@ -1,0 +1,1 @@
+main{display:flex}header{display:block}article{flex:1;transform:skewX(5deg) translateX(5em)}figure{flex:1;-webkit-clip-path:polygon(0 0,100% 0,100% 100%,100% 100%,100% 100%,100% 100%,37% 78%);clip-path:polygon(0 0,100% 0,100% 100%,100% 100%,100% 100%,100% 100%,37% 78%)}

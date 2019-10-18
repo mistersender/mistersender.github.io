@@ -1,0 +1,21 @@
+.c-card{
+ background: color(white);
+ border-radius: get($config, border-radius);
+ padding: 1em;
+ position: relative;
+ box-shadow: 0 5px 10px -5px color(a, 2);
+
+ @include media(">=md"){
+  padding: 20px;
+  width: calc(50% - .5em);
+  float: right;
+ }
+
+ &--skills{
+  @include media(">=md"){
+   width: calc(50% - .5em);
+   float: left;
+   margin-top: 0;
+  }
+ }
+}
