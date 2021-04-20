@@ -35,11 +35,11 @@
    box-shadow: 0 0 0 .2em currentColor, 0 0.25em 0.2em 0 color(a, -3);
    background: no-repeat 0 50%/cover currentColor;
    border-radius: 1px;
+   flex: 0 0 auto;
    @include media(">sm"){
     font-size: 3.6em;
    }
    @include media(">md"){
-    float: left;
     margin-right: .5em;
    }
   }
@@ -60,6 +60,10 @@
    background-image: url(../images/icons/stackoverflow.svg);
    color: color(a, -5.5);
   }
+  &--youtube:before{
+   background-image: url(../images/icons/youtube.svg);
+   color: color(a, -6);
+  }
   &--icon-only{
    text-indent: -9999em;
   }
@@ -71,6 +75,21 @@
    display: inline-block;
   }
  }
-
+ 
+ &--videos{
+   flex-direction: column;
+   .c-social__caption{
+     display: inline-block;
+   }
+   .c-social__item {
+     display: flex;
+     &:before {
+       margin-right: 0.5em;
+     }
+     & + .c-social__item {
+       margin-top: 1em;
+     }
+   }
+ }
 
 }
